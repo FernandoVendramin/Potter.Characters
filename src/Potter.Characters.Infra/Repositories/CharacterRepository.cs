@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Potter.Characters.Domain.Interfaces;
 using Potter.Characters.Domain.Models;
+using Potter.Characters.Infra.Context;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -32,9 +33,7 @@ namespace Potter.Characters.Infra.Repositories
 
         public async Task<Character> InsertAsync(Character character)
         {
-            _dataContext.Character.Add(character);
-            await _dataContext.SaveChangesAsync(); // REMOVER DPS
-
+            await _dataContext.Character.AddAsync(character);
             return character;
         }
     }

@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="System.Net.Http.Json" Version="3.2.1" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Potter.Characters.Domain\Potter.Characters.Domain.csproj" />
     <ProjectReference Include="..\Potter.Characters.Utils\Potter.Characters.Utils.csproj" />
   </ItemGroup>

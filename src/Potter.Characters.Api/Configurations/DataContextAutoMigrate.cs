@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Potter.Characters.Infra;
+using Potter.Characters.Infra.Context;
 using System;
 
 namespace Potter.Characters.Api.Configurations

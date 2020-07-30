@@ -1,5 +1,6 @@
 ﻿using Potter.Characters.Application.DTOs;
 using Potter.Characters.Application.Interfaces;
+using Potter.Characters.Application.PotterApi.Interfaces;
 using Potter.Characters.Domain.Interfaces;
 using Potter.Characters.Domain.Models;
 using Potter.Characters.Domain.Validators;
@@ -13,10 +14,14 @@ namespace Potter.Characters.Application.Services
     public class CharacterService : ICharacterService
     {
         private readonly ICharacterRepository _characterRepository;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IPotterApiCharacterService _potterApiCharacterService;
 
-        public CharacterService(ICharacterRepository characterRepository)
+        public CharacterService(ICharacterRepository characterRepository, IUnitOfWork unitOfWork, IPotterApiCharacterService potterApiCharacterService)
         {
             _characterRepository = characterRepository;
+            _unitOfWork = unitOfWork;
+            _potterApiCharacterService = potterApiCharacterService;
         }
 
         public async Task<List<Character>> GetAllAsync()
@@ -36,7 +41,7 @@ namespace Potter.Characters.Application.Services
 
         public async Task<DefaultResult<Character>> InsertAsync(CharacterNew characterNew)
         {
-            var defaultResult = new DefaultResult<Character>();
+            var defaultResult = new DefaultResult<Character>(true);
 
             var character = new Character(characterNew.Name, characterNew.Role, characterNew.School, characterNew.House, characterNew.Patronus);
             var validator = new CharacterValidator();
@@ -49,7 +54,18 @@ namespace Potter.Characters.Application.Services
                     defaultResult.SetMessage(string.Format(CharacterMessages.ExistsInDatabase, character.Name));
 
             if (defaultResult.Success)
-                defaultResult.SetData(await _characterRepository.InsertAsync(character));
+            {
+                // Consultar as casas
+                // https://www.potterapi.com/v1/houses?key=$2a$10$rOgYekVSLM96/Ah7NLXq6enm4sMsRUGI4Rib9h8cMzDMfTXkLYYvi
+                var potterApiCharacters = await _potterApiCharacterService.GetByName(character.Name);
+                //if (potterApiCharacters.Where(x => x.house))
+                //{
+
+                //}
+                await _characterRepository.InsertAsync(character);
+                await _unitOfWork.CommitAsync();
+                defaultResult.SetData(character);
+            }
 
             return defaultResult;
         }

@@ -2,11 +2,10 @@
 using Potter.Characters.Domain.Models;
 using Potter.Characters.Infra.Mappings;
 
-namespace Potter.Characters.Infra
+namespace Potter.Characters.Infra.Context
 {
     public class DataContext : DbContext
     {
-        // $2a$10$rOgYekVSLM96/Ah7NLXq6enm4sMsRUGI4Rib9h8cMzDMfTXkLYYvi
         public DataContext(DbContextOptions options) : base(options)
         { }
 

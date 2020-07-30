@@ -10,6 +10,12 @@ namespace Potter.Characters.Application.DTOs
             Messages = new List<string>();
         }
 
+        public DefaultResult(bool success)
+        {
+            Success = success;
+            Messages = new List<string>();
+        }
+
         public bool Success { get; private set; }
         public T Data { get; private set; }
         public List<string> Messages { get; private set; }
