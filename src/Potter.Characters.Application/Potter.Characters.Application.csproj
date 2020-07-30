@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Potter.Characters.Domain\Potter.Characters.Domain.csproj" />
+    <ProjectReference Include="..\Potter.Characters.Utils\Potter.Characters.Utils.csproj" />
+  </ItemGroup>
+
+</Project>
