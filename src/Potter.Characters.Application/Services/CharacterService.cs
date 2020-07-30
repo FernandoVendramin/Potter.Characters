@@ -1,9 +1,10 @@
 ﻿using Potter.Characters.Application.DTOs;
+using Potter.Characters.Application.DTOs.Character;
 using Potter.Characters.Application.Interfaces;
-using Potter.Characters.Application.PotterApi.Interfaces;
 using Potter.Characters.Domain.Interfaces;
 using Potter.Characters.Domain.Models;
 using Potter.Characters.Domain.Validators;
+using Potter.Characters.IntegrationService.PotterApi.Interfaces;
 using Potter.Characters.Utils.Messages;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,14 +25,14 @@ namespace Potter.Characters.Application.Services
             _potterApiCharacterService = potterApiCharacterService;
         }
 
-        public async Task<List<Character>> GetAllAsync()
+        public async Task<List<CharacterResponse>> GetAllAsync()
         {
-            return await _characterRepository.GetAllAsync();
+            return (await _characterRepository.GetAllAsync()).Select(x => (CharacterResponse)x).ToList();
         }
 
-        public async Task<Character> GetByNameAsync(string name)
+        public async Task<CharacterResponse> GetByNameAsync(string name)
         {
-            return await _characterRepository.GetByNameAsync(name);
+            return (CharacterResponse)(await _characterRepository.GetByNameAsync(name));
         }
 
         public async Task<bool> ExistsByName(string name)
@@ -39,9 +40,9 @@ namespace Potter.Characters.Application.Services
             return await _characterRepository.ExistsByName(name);
         }
 
-        public async Task<DefaultResult<Character>> InsertAsync(CharacterNew characterNew)
+        public async Task<DefaultResult<CharacterResponse>> InsertAsync(CharacterRequest characterNew)
         {
-            var defaultResult = new DefaultResult<Character>(true);
+            var defaultResult = new DefaultResult<CharacterResponse>(true);
 
             var character = new Character(characterNew.Name, characterNew.Role, characterNew.School, characterNew.House, characterNew.Patronus);
             var validator = new CharacterValidator();
@@ -51,7 +52,7 @@ namespace Potter.Characters.Application.Services
                 defaultResult.SetMessages(validatorResult.Errors.Select(x => x.ErrorMessage).ToList());
             else
                 if ((await ExistsByName(character.Name)))
-                    defaultResult.SetMessage(string.Format(CharacterMessages.ExistsInDatabase, character.Name));
+                defaultResult.SetMessage(string.Format(CharacterMessages.ExistsInDatabase, character.Name));
 
             if (defaultResult.Success)
             {
@@ -64,7 +65,7 @@ namespace Potter.Characters.Application.Services
                 //}
                 await _characterRepository.InsertAsync(character);
                 await _unitOfWork.CommitAsync();
-                defaultResult.SetData(character);
+                defaultResult.SetData((CharacterResponse)character);
             }
 
             return defaultResult;

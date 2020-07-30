@@ -3,15 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Options;
-using Polly;
 using Potter.Characters.Api.Configurations;
-using Potter.Characters.Api.Controllers;
-using Potter.Characters.Application.PotterApi.Configurations;
-using Potter.Characters.Application.PotterApi.Interfaces;
-using Potter.Characters.Application.PotterApi.Services;
-using System;
-using System.Net.Http;
 
 namespace Potter.Characters.Api
 {
@@ -26,28 +18,11 @@ namespace Potter.Characters.Api
 
         public void ConfigureServices(IServiceCollection services)
         {
-            // Carrega as configurações da API de integração
-            services.Configure<PotterApiConfig>(Configuration.GetSection(nameof(PotterApiConfig)));
-            services.AddSingleton<IPotterApiConfig>(x => x.GetRequiredService<IOptions<PotterApiConfig>>().Value);
-
             // implementar LOGs !!!!!!!!!
-            var retryPolicy = Policy
-                .HandleResult<HttpResponseMessage>(r => !r.IsSuccessStatusCode)
-                .RetryAsync(2, onRetry: (message, retryCount) =>
-                {
-                    Console.Out.WriteLine($"Content: {message.Result.Content.ReadAsStringAsync()}" );
-                    Console.Out.WriteLine($"ReasonPhrase: {message.Result.ReasonPhrase}");
-                    Console.Out.WriteLine($"RetryCount: {retryCount}");
-                });
 
-            services.AddHttpClient<IPotterApiCharacterService, PotterApiCharacterService>
-                (x => x.BaseAddress = new Uri(Configuration["PotterApiConfig:BaseUrl"]?.TrimEnd('/')))
-                .AddPolicyHandler(retryPolicy);
-
-            // Configura DataContext
-            services.AddDataContext(Configuration);
-            // Configura a IOC
-            services.AddDependencyInjections();
+            services.AddPotterApiConfiguration(Configuration); // Configura serviço com o site PotterApi
+            services.AddDataContext(Configuration); // Configura DataContext
+            services.AddDependencyInjections(); // Configura a IOC
 
             services.AddControllers();
         }
@@ -62,7 +37,7 @@ namespace Potter.Characters.Api
 
             app.UseRouting();
 
-            app.UseEndpoints(ep => 
+            app.UseEndpoints(ep =>
             {
                 ep.MapControllers();
             });

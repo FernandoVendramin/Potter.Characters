@@ -1,11 +1,11 @@
-﻿using Potter.Characters.Application.PotterApi.Interfaces;
-using Potter.Characters.Application.PotterApi.Models;
+﻿using Potter.Characters.IntegrationService.PotterApi.Interfaces;
+using Potter.Characters.IntegrationService.PotterApi.Models;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 
-namespace Potter.Characters.Application.PotterApi.Services
+namespace Potter.Characters.IntegrationService.PotterApi.Service
 {
     public class PotterApiCharacterService : IPotterApiCharacterService
     {

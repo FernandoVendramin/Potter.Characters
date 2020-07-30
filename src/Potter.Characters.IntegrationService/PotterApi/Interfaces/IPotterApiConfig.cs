@@ -1,4 +1,4 @@
-﻿namespace Potter.Characters.Application.PotterApi.Interfaces
+﻿namespace Potter.Characters.IntegrationService.PotterApi.Interfaces
 {
     public interface IPotterApiConfig
     {

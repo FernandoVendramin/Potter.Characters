@@ -16,6 +16,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Potter.Characters.Application\Potter.Characters.Application.csproj" />
     <ProjectReference Include="..\Potter.Characters.Infra\Potter.Characters.Infra.csproj" />
+    <ProjectReference Include="..\Potter.Characters.IntegrationService\Potter.Characters.IntegrationService.csproj" />
   </ItemGroup>
 
 </Project>

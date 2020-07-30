@@ -1,4 +1,4 @@
-﻿namespace Potter.Characters.Application.PotterApi.Models
+﻿namespace Potter.Characters.IntegrationService.PotterApi.Models
 {
     public class PotterApiCharacter
     {

@@ -1,11 +1,12 @@
-﻿using Potter.Characters.Application.PotterApi.Interfaces;
+﻿using Potter.Characters.IntegrationService.PotterApi.Interfaces;
 
-namespace Potter.Characters.Application.PotterApi.Configurations
+namespace Potter.Characters.IntegrationService.PotterApi.Configurations
 {
     public class PotterApiConfig : IPotterApiConfig
     {
         private string baseUrl;
-        public string BaseUrl { 
+        public string BaseUrl
+        {
             get => baseUrl?.TrimEnd('/');
             set { baseUrl = value; }
         }

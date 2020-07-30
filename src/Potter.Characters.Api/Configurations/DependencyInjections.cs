@@ -1,7 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Potter.Characters.Application.Interfaces;
-using Potter.Characters.Application.PotterApi.Interfaces;
-using Potter.Characters.Application.PotterApi.Services;
 using Potter.Characters.Application.Services;
 using Potter.Characters.Domain.Interfaces;
 using Potter.Characters.Infra.Context;

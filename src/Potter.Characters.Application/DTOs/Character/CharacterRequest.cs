@@ -1,6 +1,6 @@
-﻿namespace Potter.Characters.Application.DTOs
+﻿namespace Potter.Characters.Application.DTOs.Character
 {
-    public class CharacterNew
+    public class CharacterRequest
     {
         public string Name { get; set; }
         public string Role { get; set; }

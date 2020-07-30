@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Potter.Characters.Application.DTOs;
+using Potter.Characters.Application.DTOs.Character;
 using Potter.Characters.Application.Interfaces;
 using Potter.Characters.Domain.Models;
 using System.Collections.Generic;
@@ -20,14 +21,14 @@ namespace Potter.Characters.Api.Controllers
 
         [HttpGet]
         [Route("")]
-        public async Task<ActionResult<List<Character>>> GetAll()
+        public async Task<ActionResult<List<CharacterResponse>>> GetAll()
         {
             return await _characterService.GetAllAsync();
         }
 
         [HttpPost]
         [Route("")]
-        public async Task<ActionResult<DefaultResult<Character>>> Insert([FromBody] CharacterNew characterNew)
+        public async Task<ActionResult<DefaultResult<CharacterResponse>>> Insert([FromBody] CharacterRequest characterNew)
         {
             return await _characterService.InsertAsync(characterNew);
         }
