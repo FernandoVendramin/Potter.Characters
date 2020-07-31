@@ -1,8 +1,10 @@
 ﻿using MongoDB.Driver;
+using MongoDB.Driver.Linq;
 using Potter.Characters.Domain.Interfaces.Base;
 using Potter.Characters.Infra.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -18,9 +20,10 @@ namespace Potter.Characters.Infra.Repositories.Base
             _collection = database.GetCollection<TModel>(typeof(TModel).Name);
         }
 
-        public Task<TModel> DeleteAsync(Guid id, CancellationToken cancellationToken = default)
+        public async Task<DeleteResult> DeleteAsync(string id, CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+            var filter = new FilterDefinitionBuilder<TModel>().Where(x => x.Id == id);
+            return await _collection.DeleteOneAsync(filter, cancellationToken);
         }
 
         public async Task<IEnumerable<TModel>> GetByFilterAsync(FilterDefinition<TModel> filter, CancellationToken cancellationToken = default)
@@ -39,9 +42,12 @@ namespace Potter.Characters.Infra.Repositories.Base
             return model;
         }
 
-        public Task<TModel> UpdateAsync(TModel model, CancellationToken cancellationToken = default)
+        public async Task<TModel> UpdateAsync(TModel model, CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+            var filter = new FilterDefinitionBuilder<TModel>().Where(x => x.Id == model.Id);
+            await _collection.ReplaceOneAsync(filter, model, new ReplaceOptions { IsUpsert = true }, cancellationToken);
+
+            return (await GetByFilterAsync(filter, cancellationToken)).FirstOrDefault();
         }
     }
 }

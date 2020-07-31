@@ -3,6 +3,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Polly;
+using Polly.Extensions.Http;
+using Polly.Wrap;
 using Potter.Characters.IntegrationService.PotterApi.Configurations;
 using Potter.Characters.IntegrationService.PotterApi.Interfaces;
 using Potter.Characters.IntegrationService.PotterApi.Service;
@@ -24,23 +26,40 @@ namespace Potter.Characters.Api.Configurations
             services.Configure<PotterApiConfig>(configuration.GetSection(nameof(PotterApiConfig)));
             services.AddSingleton<IPotterApiConfig>(x => x.GetRequiredService<IOptions<PotterApiConfig>>().Value);
 
-            var retryPolicy = Policy
+            IAsyncPolicy<HttpResponseMessage> retryPolicy = Policy
                 .HandleResult<HttpResponseMessage>(r => !r.IsSuccessStatusCode)
-                .RetryAsync(2, onRetry: (message, retryCount) =>
-                {
-                    Console.Out.WriteLine($"Content: {message.Result.Content.ReadAsStringAsync()}");
-                    Console.Out.WriteLine($"ReasonPhrase: {message.Result.ReasonPhrase}");
-                    Console.Out.WriteLine($"RetryCount: {retryCount}");
-                });
+                .WaitAndRetryAsync(
+                    3, 
+                    retryAttempt => TimeSpan.FromSeconds(retryAttempt),
+                    onRetry: (message, retryCount) =>
+                    {
+                        Console.Out.WriteLine($"Content: {message.Result.Content.ReadAsStringAsync()}");
+                        Console.Out.WriteLine($"ReasonPhrase: {message.Result.ReasonPhrase}");
+                        Console.Out.WriteLine($"RetryCount: {retryCount}");
+                    });
+
+            IAsyncPolicy<HttpResponseMessage> circuitBreakerPolicy = Policy
+                .HandleResult<HttpResponseMessage>(r => !r.IsSuccessStatusCode)
+                .CircuitBreakerAsync(
+                    3,
+                    TimeSpan.FromSeconds(30),
+                    onBreak: (message, timespan) => {
+                        Console.Out.WriteLine($"Content: {message.Result.Content.ReadAsStringAsync()}");
+                        Console.Out.WriteLine($"ReasonPhrase: {message.Result.ReasonPhrase}");
+                    }, onReset: () => {
+                        Console.Out.WriteLine("Reset");
+                    });
+
+            IAsyncPolicy<HttpResponseMessage> policyWrap = Policy.WrapAsync(retryPolicy, circuitBreakerPolicy);
 
             var baseUrl = configuration.GetSection("PotterApiConfig")?.GetSection("BaseUrl").Value?.TrimEnd('/');
             services.AddHttpClient<IPotterApiCharacterService, PotterApiCharacterService>
                 (x => x.BaseAddress = new Uri(baseUrl))
-                .AddPolicyHandler(retryPolicy);
+                .AddPolicyHandler(policyWrap);
 
             services.AddHttpClient<IPotterApiHouseService, PotterApiHouseService>
                 (x => x.BaseAddress = new Uri(baseUrl))
-                .AddPolicyHandler(retryPolicy);
+                .AddPolicyHandler(policyWrap);
         }
     }
 }

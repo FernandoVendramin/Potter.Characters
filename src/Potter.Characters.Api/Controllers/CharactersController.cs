@@ -2,7 +2,6 @@
 using Potter.Characters.Application.DTOs;
 using Potter.Characters.Application.DTOs.Character;
 using Potter.Characters.Application.Interfaces;
-using Potter.Characters.Domain.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -28,9 +27,16 @@ namespace Potter.Characters.Api.Controllers
 
         [HttpPost]
         [Route("")]
-        public async Task<ActionResult<DefaultResult<CharacterResponse>>> Insert([FromBody] CharacterRequest characterNew)
+        public async Task<ActionResult<DefaultResult<CharacterResponse>>> Insert([FromBody] CharacterRequest characterRequest)
         {
-            return await _characterService.InsertAsync(characterNew);
+            return await _characterService.InsertAsync(characterRequest);
+        }
+
+        [HttpPut]
+        [Route("")]
+        public async Task<ActionResult<DefaultResult<CharacterResponse>>> Update([FromBody] CharacterRequest characterRequest)
+        {
+            return await _characterService.UpdateAsync(characterRequest);
         }
     }
 }

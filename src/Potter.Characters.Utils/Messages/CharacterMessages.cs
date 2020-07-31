@@ -4,6 +4,7 @@
     {
         public static string ExistsInDatabase = "Já existe um personagem com o nome '{0}' no banco de dados.";
         public static string NotExistsInPotterApi = "Não existe um personagem com o nome '{0} na base do PotterApi.'";
+        public static string NotExistsInDatabase = "Não existe um personagem com o nome '{0} no Banco de Dados.'";
 
         // Model Messages
         public static string NameIsRequired = "O Nome é obrigatório.";
