@@ -4,8 +4,8 @@ using System.Threading.Tasks;
 
 namespace Potter.Characters.IntegrationService.PotterApi.Interfaces
 {
-    public interface IPotterApiCharacterService
+    public interface IPotterApiHouseService
     {
-        Task<List<PotterApiCharacter>> GetByNameAsync(string name);
+        Task<List<PotterApiHouse>> GetAllAsync();
     }
 }

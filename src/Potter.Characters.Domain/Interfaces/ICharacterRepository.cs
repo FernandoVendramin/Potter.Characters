@@ -1,14 +1,10 @@
-﻿using Potter.Characters.Domain.Models;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using Potter.Characters.Domain.Interfaces.Base;
+using Potter.Characters.Domain.Models;
 
 namespace Potter.Characters.Domain.Interfaces
 {
-    public interface ICharacterRepository
+    public interface ICharacterRepository : IRepositoryBase<Character>
     {
-        Task<List<Character>> GetAllAsync();
-        Task<Character> GetByNameAsync(string name);
-        Task<bool> ExistsByName(string name);
-        Task<Character> InsertAsync(Character character);
+
     }
 }

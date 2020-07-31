@@ -10,6 +10,6 @@ namespace Potter.Characters.Application.Interfaces
         Task<List<CharacterResponse>> GetAllAsync();
         Task<CharacterResponse> GetByNameAsync(string name);
         Task<bool> ExistsByName(string name);
-        Task<DefaultResult<CharacterResponse>> InsertAsync(CharacterRequest characterNew);
+        Task<DefaultResult<CharacterResponse>> InsertAsync(CharacterRequest characterRequest);
     }
 }

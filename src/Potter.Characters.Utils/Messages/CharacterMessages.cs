@@ -3,6 +3,7 @@
     public class CharacterMessages
     {
         public static string ExistsInDatabase = "Já existe um personagem com o nome '{0}' no banco de dados.";
+        public static string NotExistsInPotterApi = "Não existe um personagem com o nome '{0} na base do PotterApi.'";
 
         // Model Messages
         public static string NameIsRequired = "O Nome é obrigatório.";
@@ -14,8 +15,8 @@
         public static string SchoolIsRequired = "A Escola é obrigatória.";
         public static string SchoolLessThen = "A quantidade de caracters da Escola, deve ser inferior a 200.";
 
-        public static string HouseIsRequired = "A Casa é obrigatória.";
-        public static string HouseLessThen = "A quantidade de caracters da Casa, deve ser inferior a 100.";
+        //public static string HouseIsRequired = "A Casa é obrigatória.";
+        //public static string HouseLessThen = "A quantidade de caracters da Casa, deve ser inferior a 100.";
 
         public static string PatronusIsRequired = "O Patronus é obrigatório.";
         public static string PatronusLessThen = "A quantidade de caracters do Patronus, deve ser inferior a 50.";

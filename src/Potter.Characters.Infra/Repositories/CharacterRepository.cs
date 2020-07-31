@@ -1,40 +1,47 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using MongoDB.Driver;
 using Potter.Characters.Domain.Interfaces;
 using Potter.Characters.Domain.Models;
-using Potter.Characters.Infra.Context;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Potter.Characters.Infra.Interfaces;
+using Potter.Characters.Infra.Repositories.Base;
 
 namespace Potter.Characters.Infra.Repositories
 {
-    public class CharacterRepository : ICharacterRepository
+    public class CharacterRepository : RepositoryBase<Character>, ICharacterRepository
     {
-        protected readonly DataContext _dataContext;
-        public CharacterRepository(DataContext dataContext)
+        public CharacterRepository(IMongoClient client, IMongoConfig config) : base(client, config)
         {
-            _dataContext = dataContext;
-        }
 
-        public async Task<List<Character>> GetAllAsync()
-        {
-            return await _dataContext.Character.ToListAsync();
         }
+        //private readonly IMongoCollection<Character> _collection;
+        //public CharacterRepository(IMongoClient client, IMongoConfig mongoConfig)
+        //{
+        //    var database = client.GetDatabase(mongoConfig.Database);
+        //    _collection = database.GetCollection<Character>(typeof(Character).Name);
+        //}
 
-        public async Task<Character> GetByNameAsync(string name)
-        {
-            return await _dataContext.Character.Where(x => x.Name.ToLower() == name.ToLower()).FirstOrDefaultAsync();
-        }
+        //public Task<Character> DeleteAsync(Guid id, CancellationToken cancellationToken = default)
+        //{
+        //    throw new NotImplementedException();
+        //}
 
-        public async Task<bool> ExistsByName(string name)
-        {
-            return await _dataContext.Character.AnyAsync(x => x.Name.ToLower() == name.ToLower());
-        }
+        //public Task<IEnumerable<Character>> GetAllAsync(CancellationToken cancellationToken = default)
+        //{
+        //    throw new NotImplementedException();
+        //}
 
-        public async Task<Character> InsertAsync(Character character)
-        {
-            await _dataContext.Character.AddAsync(character);
-            return character;
-        }
+        //public async Task<IEnumerable<Character>> GetByFilterAsync(FilterDefinition<Character> filter, CancellationToken cancellationToken = default)
+        //{
+        //    return await _collection.Find(filter).ToListAsync(cancellationToken);
+        //}
+
+        //public Task<Character> InsertAsync(Character entity, CancellationToken cancellationToken = default)
+        //{
+        //    throw new NotImplementedException();
+        //}
+
+        //public Task<Character> UpdateAsync(Character entity, CancellationToken cancellationToken = default)
+        //{
+        //    throw new NotImplementedException();
+        //}
     }
 }

@@ -19,9 +19,9 @@ namespace Potter.Characters.Api
         public void ConfigureServices(IServiceCollection services)
         {
             // implementar LOGs !!!!!!!!!
-
+            services.AddMongoDBConfiguration(Configuration); // Configura o Mongo
             services.AddPotterApiConfiguration(Configuration); // Configura serviço com o site PotterApi
-            services.AddDataContext(Configuration); // Configura DataContext
+            //services.AddDataContext(Configuration); // Configura DataContext
             services.AddDependencyInjections(); // Configura a IOC
 
             services.AddControllers();
@@ -30,7 +30,7 @@ namespace Potter.Characters.Api
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             // AutoMigration do banco
-            app.AddDataContextConfigureAutoMigrate();
+            //app.AddDataContextConfigureAutoMigrate();
 
             if (env.IsDevelopment())
                 app.UseDeveloperExceptionPage();

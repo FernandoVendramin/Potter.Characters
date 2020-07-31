@@ -33,8 +33,13 @@ namespace Potter.Characters.Api.Configurations
                     Console.Out.WriteLine($"RetryCount: {retryCount}");
                 });
 
+            var baseUrl = configuration.GetSection("PotterApiConfig")?.GetSection("BaseUrl").Value?.TrimEnd('/');
             services.AddHttpClient<IPotterApiCharacterService, PotterApiCharacterService>
-                (x => x.BaseAddress = new Uri(configuration["PotterApiConfig:BaseUrl"]?.TrimEnd('/')))
+                (x => x.BaseAddress = new Uri(baseUrl))
+                .AddPolicyHandler(retryPolicy);
+
+            services.AddHttpClient<IPotterApiHouseService, PotterApiHouseService>
+                (x => x.BaseAddress = new Uri(baseUrl))
                 .AddPolicyHandler(retryPolicy);
         }
     }

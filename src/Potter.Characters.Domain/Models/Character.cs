@@ -1,11 +1,22 @@
-﻿using Potter.Characters.Domain.Models.Base;
+﻿using FluentValidation.Results;
+using MongoDB.Bson.Serialization.Attributes;
+using Potter.Characters.Domain.Models.Base;
+using Potter.Characters.Domain.Validators;
 using System;
 
 namespace Potter.Characters.Domain.Models
 {
     public class Character : ModelBase
     {
-        public Character(Guid id, string name, string role, string school, string house, string patronus)
+        public Character(
+            string id, 
+            string name, 
+            string role, 
+            string school, 
+            House house, 
+            string patronus, 
+            DateTime editionDateTime, 
+            DateTime creationDateTime)
         {
             Id = id;
             Name = name;
@@ -13,22 +24,34 @@ namespace Potter.Characters.Domain.Models
             School = school;
             House = house;
             Patronus = patronus;
+            EditionDateTime = editionDateTime;
+            CreationDateTime = creationDateTime;
         }
 
-        public Character(string name, string role, string school, string house, string patronus)
-        {
-            Id = Guid.NewGuid();
-            Name = name;
-            Role = role;
-            School = school;
-            House = house;
-            Patronus = patronus;
-        }
-
+        [BsonRequired()]
         public string Name { get; private set; }
+
+        [BsonRequired()]
         public string Role { get; private set; }
+
+        [BsonRequired()]
         public string School { get; private set; }
-        public string House { get; private set; }
+
+        public House House { get; private set; }
+
+        [BsonRequired()]
         public string Patronus { get; private set; }
+
+        [BsonRequired()]
+        public DateTime EditionDateTime { get; set; }
+
+        [BsonRequired()]
+        public DateTime CreationDateTime { get; set; }
+
+        public ValidationResult Validate()
+        {
+            var validator = new CharacterValidator();
+            return validator.Validate(this);
+        }
     }
 }

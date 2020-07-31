@@ -17,8 +17,8 @@ namespace Potter.Characters.Domain.Validators
             RuleFor(x => x.School).NotEmpty().WithMessage(CharacterMessages.SchoolIsRequired);
             RuleFor(x => x.School).MaximumLength(200).WithMessage(CharacterMessages.SchoolLessThen);
 
-            RuleFor(x => x.House).NotEmpty().WithMessage(CharacterMessages.HouseIsRequired);
-            RuleFor(x => x.House).MaximumLength(100).WithMessage(CharacterMessages.HouseLessThen);
+            //RuleFor(x => x.House).NotEmpty().WithMessage(CharacterMessages.HouseIsRequired);
+            //RuleFor(x => x.House).MaximumLength(100).WithMessage(CharacterMessages.HouseLessThen);
 
             RuleFor(x => x.Patronus).NotEmpty().WithMessage(CharacterMessages.PatronusIsRequired);
             RuleFor(x => x.Patronus).MaximumLength(50).WithMessage(CharacterMessages.PatronusLessThen);
