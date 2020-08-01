@@ -20,6 +20,7 @@ namespace Potter.Characters.Api.Configurations
 
             // Application
             services.AddScoped<ICharacterService, CharacterService>();
+            services.AddScoped<IHouseService, HouseService>();
         }
     }
 }

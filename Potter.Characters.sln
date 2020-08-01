@@ -13,7 +13,26 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Potter.Characters.Applicati
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Potter.Characters.Utils", "src\Potter.Characters.Utils\Potter.Characters.Utils.csproj", "{6E2BE67F-E4BC-4AF0-B85B-16991538F8F0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Potter.Characters.IntegrationService", "src\Potter.Characters.IntegrationService\Potter.Characters.IntegrationService.csproj", "{1EC1CE07-8D48-4D78-9299-4103D0E98BC6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Potter.Characters.IntegrationService", "src\Potter.Characters.IntegrationService\Potter.Characters.IntegrationService.csproj", "{1EC1CE07-8D48-4D78-9299-4103D0E98BC6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "2 - Api", "2 - Api", "{AACC7983-EAD8-4DA2-A9A6-0D18AE4A9893}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "4 - Domain", "4 - Domain", "{F8771D43-63B3-40A8-BAA4-810B11E279DD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "5 - Infra", "5 - Infra", "{FCB67186-6713-4472-A312-FFDABF26D3A4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "6 - Utils", "6 - Utils", "{ADEBDA9F-E6E5-4A47-ACBD-C47616636FD6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1 - Docs", "1 - Docs", "{8744977A-CFB9-4006-AD69-426D02E7266C}"
+	ProjectSection(SolutionItems) = preProject
+		src\Potter.Characters.Api\README.md = src\Potter.Characters.Api\README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "3 - Services", "3 - Services", "{3A7F1274-E4A6-48FC-A830-E840FBCC388A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Potter.Characters.Domain.Test", "test\Potter.Characters.Domain.Test\Potter.Characters.Domain.Test.csproj", "{D26756A9-4878-4451-A056-D6FCD4FA9DC9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Potter.Characters.Application.Test", "test\Potter.Characters.Application.Test\Potter.Characters.Application.Test.csproj", "{A3D6627D-B361-4B65-97B5-A09350ABC233}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,9 +64,27 @@ Global
 		{1EC1CE07-8D48-4D78-9299-4103D0E98BC6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1EC1CE07-8D48-4D78-9299-4103D0E98BC6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1EC1CE07-8D48-4D78-9299-4103D0E98BC6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D26756A9-4878-4451-A056-D6FCD4FA9DC9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D26756A9-4878-4451-A056-D6FCD4FA9DC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D26756A9-4878-4451-A056-D6FCD4FA9DC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D26756A9-4878-4451-A056-D6FCD4FA9DC9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A3D6627D-B361-4B65-97B5-A09350ABC233}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A3D6627D-B361-4B65-97B5-A09350ABC233}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A3D6627D-B361-4B65-97B5-A09350ABC233}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A3D6627D-B361-4B65-97B5-A09350ABC233}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{F63DC9E7-8223-4275-90C4-5640176C8B05} = {F8771D43-63B3-40A8-BAA4-810B11E279DD}
+		{941F108D-0B09-4385-A1A9-6636C28384A5} = {FCB67186-6713-4472-A312-FFDABF26D3A4}
+		{9A0CAA8A-5F76-4DBC-858E-67B8D6F88DEE} = {AACC7983-EAD8-4DA2-A9A6-0D18AE4A9893}
+		{FBF96936-2FEB-41DE-A58A-8A718092E96D} = {3A7F1274-E4A6-48FC-A830-E840FBCC388A}
+		{6E2BE67F-E4BC-4AF0-B85B-16991538F8F0} = {ADEBDA9F-E6E5-4A47-ACBD-C47616636FD6}
+		{1EC1CE07-8D48-4D78-9299-4103D0E98BC6} = {3A7F1274-E4A6-48FC-A830-E840FBCC388A}
+		{D26756A9-4878-4451-A056-D6FCD4FA9DC9} = {F8771D43-63B3-40A8-BAA4-810B11E279DD}
+		{A3D6627D-B361-4B65-97B5-A09350ABC233} = {3A7F1274-E4A6-48FC-A830-E840FBCC388A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AE24BE14-F3DC-4BF1-922A-EE5754F7A4C4}

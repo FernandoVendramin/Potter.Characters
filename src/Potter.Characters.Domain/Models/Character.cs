@@ -31,15 +31,12 @@ namespace Potter.Characters.Domain.Models
         [BsonRequired()]
         public string Name { get; private set; }
 
-        [BsonRequired()]
         public string Role { get; private set; }
 
-        [BsonRequired()]
         public string School { get; private set; }
 
         public House House { get; private set; }
 
-        [BsonRequired()]
         public string Patronus { get; private set; }
 
         [BsonRequired()]

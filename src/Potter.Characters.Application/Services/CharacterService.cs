@@ -17,37 +17,56 @@ namespace Potter.Characters.Application.Services
     {
         private readonly ICharacterRepository _characterRepository;
         private readonly IPotterApiCharacterService _potterApiCharacterService;
-        private readonly IPotterApiHouseService _potterApiHouseService;
+        private readonly IHouseService _houseService;
 
         public CharacterService(
             ICharacterRepository characterRepository,
             IPotterApiCharacterService potterApiCharacterService,
-            IPotterApiHouseService potterApiHouseService)
+            IHouseService houseService)
         {
             _characterRepository = characterRepository;
             _potterApiCharacterService = potterApiCharacterService;
-            _potterApiHouseService = potterApiHouseService;
+            _houseService = houseService;
         }
 
-        public async Task<List<CharacterResponse>> GetAllAsync()
+        public async Task<DefaultResult<List<CharacterResponse>>> GetAllAsync(CharacterRequestFilter filters)
         {
-            return (await _characterRepository.GetAllAsync()).Select(x => (CharacterResponse)x).ToList();
+            var defaultResult = new DefaultResult<List<CharacterResponse>>();
+
+            var builder = Builders<Character>.Filter;
+            var baseFilter = builder.Empty;
+
+            if (!string.IsNullOrEmpty(filters.House))
+                baseFilter &= builder.Eq("House.Id", filters.House);
+
+            var props = typeof(CharacterRequestFilter).GetProperties().Where(x => x.Name != "House");
+            foreach (var prop in props)
+            {
+                string value = prop.GetValue(filters)?.ToString();
+                if (!string.IsNullOrEmpty(value))
+                    baseFilter &= builder.Eq(prop.Name, value);
+            }
+
+            defaultResult.SetData((await _characterRepository.GetAsync(baseFilter)).Select(x => (CharacterResponse)x).ToList());
+            return defaultResult;
         }
 
-        public async Task<List<CharacterResponse>> GetByFilterAsync(FilterDefinition<Character> filter)
+        public async Task<DefaultResult<List<CharacterResponse>>> GetByFilterAsync(FilterDefinition<Character> filter)
         {
-            return (await _characterRepository.GetByFilterAsync(filter)).Select(x => (CharacterResponse)x).ToList();
+            var defaultResult = new DefaultResult<List<CharacterResponse>>();
+            defaultResult.SetData((await _characterRepository.GetAsync(filter)).Select(x => (CharacterResponse)x).ToList());
+            return defaultResult;
         }
 
         public async Task<bool> ExistsByName(string name)
         {
-            var character = await _characterRepository.GetByFilterAsync(new FilterDefinitionBuilder<Character>().Where(x => x.Name == name));
-            return character != null;
+            var character = await _characterRepository.GetAsync(new FilterDefinitionBuilder<Character>().Where(x => x.Name == name));
+            return character != null && character.Count() > 0;
         }
 
-        public async Task<DefaultResult<CharacterResponse>> InsertAsync(CharacterRequest characterRequest)
+        private async Task<DefaultResult<CheckInsertInconsistenciesResponse>> CheckInsertInconsistenciesAsync(CharacterRequest characterRequest)
         {
-            var defaultResult = new DefaultResult<CharacterResponse>();
+            var defaultResult = new DefaultResult<CheckInsertInconsistenciesResponse>();
 
             var potterApiCharacter = (await _potterApiCharacterService.GetByNameAsync(characterRequest.Name)).FirstOrDefault();
             if (potterApiCharacter == null)
@@ -56,41 +75,69 @@ namespace Potter.Characters.Application.Services
                 return defaultResult;
             }
 
-            House house = null;
-            if (!string.IsNullOrEmpty(characterRequest.House))
+            var houseInconsistencies = await _houseService.CheckHouseInconsistenciesAsync(characterRequest, potterApiCharacter._id);
+            if (!houseInconsistencies.Success)
             {
-                var potterApiHouses = await _potterApiHouseService.GetAllAsync();
-                var potterHouse = potterApiHouses.Where(x => x._id == characterRequest.House).FirstOrDefault();
-                if (potterHouse == null)
-                {
-                    defaultResult.SetMessage(string.Format(HouseMessages.NotExistsInPotterApi, characterRequest.House));
-                    return defaultResult;
-                }
-                else
-                {
-                    if (!potterHouse.members.Any(x => x == potterApiCharacter._id))
-                    {
-                        defaultResult.SetMessage(string.Format(HouseMessages.CharacterNotPartOfHouse, characterRequest.Name, potterHouse.name));
-                        return defaultResult;
-                    }
+                defaultResult.SetMessages(houseInconsistencies.Messages);
+                return defaultResult;
+            }
 
-                    house = new House(
-                        potterHouse._id,
-                        potterHouse.name,
-                        potterHouse.mascot,
-                        potterHouse.headOfHouse,
-                        potterHouse.houseGhost,
-                        potterHouse.founder,
-                        potterHouse.school);
-                }
+            defaultResult.SetData(new CheckInsertInconsistenciesResponse()
+            {
+                Id = potterApiCharacter._id,
+                House = houseInconsistencies.Data
+            });
+
+            return defaultResult;
+        }
+
+        private async Task<DefaultResult<CheckUpdateInconsistenciesResponse>> CheckUpdateInconsistenciesAsync(CharacterRequest characterRequest)
+        {
+            var defaultResult = new DefaultResult<CheckUpdateInconsistenciesResponse>();
+
+            var dbCharacter = (await _characterRepository.GetAsync
+                (new FilterDefinitionBuilder<Character>().Where(x => x.Name == characterRequest.Name)))
+                .FirstOrDefault();
+
+            if (dbCharacter == null)
+            {
+                defaultResult.SetMessage(string.Format(CharacterMessages.NotExistsNameInDatabase, characterRequest.Name));
+                return defaultResult;
+            }
+
+            var houseInconsistencies = await _houseService.CheckHouseInconsistenciesAsync(characterRequest, dbCharacter.Id);
+            if (!houseInconsistencies.Success)
+            {
+                defaultResult.SetMessages(houseInconsistencies.Messages);
+                return defaultResult;
+            }
+
+            defaultResult.SetData(new CheckUpdateInconsistenciesResponse()
+            {
+                Character = dbCharacter,
+                House = houseInconsistencies.Data
+            });
+
+            return defaultResult;
+        }
+
+        public async Task<DefaultResult<CharacterResponse>> InsertAsync(CharacterRequest characterRequest)
+        {
+            var defaultResult = new DefaultResult<CharacterResponse>();
+
+            var characterInconsistenciesResult = await CheckInsertInconsistenciesAsync(characterRequest);
+            if (!characterInconsistenciesResult.Success)
+            {
+                defaultResult.SetMessages(characterInconsistenciesResult.Messages);
+                return defaultResult;
             }
 
             var character = new Character(
-                potterApiCharacter._id,
+                characterInconsistenciesResult.Data.Id,
                 characterRequest.Name,
                 characterRequest.Role,
                 characterRequest.School,
-                house,
+                characterInconsistenciesResult.Data.House,
                 characterRequest.Patronus,
                 DateTime.Now,
                 DateTime.Now);
@@ -117,56 +164,22 @@ namespace Potter.Characters.Application.Services
         {
             var defaultResult = new DefaultResult<CharacterResponse>();
 
-            var dbCharacter = (await _characterRepository.GetByFilterAsync
-                (new FilterDefinitionBuilder<Character>().Where(x => x.Name == characterRequest.Name)))
-                .FirstOrDefault();
-
-            if (dbCharacter == null)
+            var characterInconsistenciesResult = await CheckUpdateInconsistenciesAsync(characterRequest);
+            if (!characterInconsistenciesResult.Success)
             {
-                defaultResult.SetMessage(string.Format(CharacterMessages.NotExistsInDatabase, characterRequest.Name));
+                defaultResult.SetMessages(characterInconsistenciesResult.Messages);
                 return defaultResult;
             }
 
-            House house = dbCharacter.House;
-            if (!string.IsNullOrEmpty(characterRequest.House))
-            {
-                var potterApiHouses = await _potterApiHouseService.GetAllAsync();
-                var potterHouse = potterApiHouses.Where(x => x._id == characterRequest.House).FirstOrDefault();
-                if (potterHouse == null)
-                {
-                    defaultResult.SetMessage(string.Format(HouseMessages.NotExistsInPotterApi, characterRequest.House));
-                    return defaultResult;
-                }
-                else
-                {
-                    if (!potterHouse.members.Any(x => x == dbCharacter.Id))
-                    {
-                        defaultResult.SetMessage(string.Format(HouseMessages.CharacterNotPartOfHouse, characterRequest.Name, potterHouse.name));
-                        return defaultResult;
-                    }
-
-                    house = new House(
-                        potterHouse._id,
-                        potterHouse.name,
-                        potterHouse.mascot,
-                        potterHouse.headOfHouse,
-                        potterHouse.houseGhost,
-                        potterHouse.founder,
-                        potterHouse.school);
-                }
-            }
-            else
-                house = null;
-
             var character = new Character(
-                dbCharacter.Id,
+                characterInconsistenciesResult.Data.Character.Id,
                 characterRequest.Name,
                 characterRequest.Role,
                 characterRequest.School,
-                house,
+                characterInconsistenciesResult.Data.House,
                 characterRequest.Patronus,
                 DateTime.Now,
-                dbCharacter.CreationDateTime);
+                characterInconsistenciesResult.Data.Character.CreationDateTime);
 
             var validatorResult = character.Validate();
 
@@ -183,9 +196,20 @@ namespace Potter.Characters.Application.Services
             return defaultResult;
         }
 
-        public async Task<DefaultResult<DeleteResult>> DeleteAsync(string id)
+        public async Task<DefaultResultMessage> DeleteAsync(string id)
         {
-            throw new NotImplementedException();
+            var deleteResult = await _characterRepository.DeleteAsync(id);
+            var defaultResult = new DefaultResultMessage();
+
+            if (deleteResult.DeletedCount > 0)
+            {
+                defaultResult.SetMessage(CommonMessages.ReccordsDeleted);
+                defaultResult.IsSuccess();
+            }
+            else
+                defaultResult.SetMessage(string.Format(CharacterMessages.NotExistsIdInDatabase, id));
+
+            return defaultResult;
         }
     }
 }

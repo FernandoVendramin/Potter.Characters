@@ -14,5 +14,6 @@
         public bool deathEater { get; set; }
         public string bloodStatus { get; set; }
         public string species { get; set; }
+        public string patronus { get; set; }
     }
 }

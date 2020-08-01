@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Primitives;
+using MongoDB.Driver;
 using Potter.Characters.Application.DTOs;
 using Potter.Characters.Application.DTOs.Character;
 using Potter.Characters.Application.Interfaces;
@@ -18,25 +20,89 @@ namespace Potter.Characters.Api.Controllers
             _characterService = characterService;
         }
 
+        /// <summary>
+        /// Retorna todos os Personagens.
+        /// </summary>
         [HttpGet]
         [Route("")]
-        public async Task<ActionResult<List<CharacterResponse>>> GetAll()
+        public async Task<ActionResult<DefaultResult<List<CharacterResponse>>>> GetAll(string name, string house, string role, string school, string patronus)
         {
-            return await _characterService.GetAllAsync();
+            var defaultResult = new DefaultResult<List<CharacterResponse>>();
+
+            try
+            {
+                defaultResult = await _characterService.GetAllAsync(new CharacterRequestFilter() { 
+                    House = house,
+                    Name = name,
+                    Role = role,
+                    School = school,
+                    Patronus = patronus
+                });
+            }
+            catch (System.Exception ex)
+            {
+                defaultResult.SetMessage(ex.Message);
+                return StatusCode(500, defaultResult);
+            }
+
+            return defaultResult;
         }
 
         [HttpPost]
         [Route("")]
         public async Task<ActionResult<DefaultResult<CharacterResponse>>> Insert([FromBody] CharacterRequest characterRequest)
         {
-            return await _characterService.InsertAsync(characterRequest);
+            var defaultResult = new DefaultResult<CharacterResponse>();
+
+            try
+            {
+                defaultResult = await _characterService.InsertAsync(characterRequest);
+            }
+            catch (System.Exception ex)
+            {
+                defaultResult.SetMessage(ex.Message);
+                return StatusCode(500, defaultResult);
+            }
+            
+            return defaultResult;
         }
 
         [HttpPut]
         [Route("")]
         public async Task<ActionResult<DefaultResult<CharacterResponse>>> Update([FromBody] CharacterRequest characterRequest)
         {
-            return await _characterService.UpdateAsync(characterRequest);
+            var defaultResult = new DefaultResult<CharacterResponse>();
+
+            try
+            {
+                defaultResult = await _characterService.UpdateAsync(characterRequest);
+            }
+            catch (System.Exception ex)
+            {
+                defaultResult.SetMessage(ex.Message);
+                return StatusCode(500, defaultResult);
+            }
+
+            return defaultResult;
+        }
+
+        [HttpDelete]
+        [Route("")]
+        public async Task<ActionResult<DefaultResultMessage>> Delete(string id)
+        {
+            var defaultResult = new DefaultResultMessage();
+
+            try
+            {
+                defaultResult = await _characterService.DeleteAsync(id);
+            }
+            catch (System.Exception ex)
+            {
+                defaultResult.SetMessage(ex.Message);
+                return StatusCode(500, defaultResult);
+            }
+
+            return defaultResult;
         }
     }
 }

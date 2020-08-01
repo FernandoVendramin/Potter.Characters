@@ -9,11 +9,11 @@ namespace Potter.Characters.Application.Interfaces
 {
     public interface ICharacterService
     {
-        Task<List<CharacterResponse>> GetAllAsync();
-        Task<List<CharacterResponse>> GetByFilterAsync(FilterDefinition<Character> filter);
+        Task<DefaultResult<List<CharacterResponse>>> GetAllAsync(CharacterRequestFilter filters);
+        Task<DefaultResult<List<CharacterResponse>>> GetByFilterAsync(FilterDefinition<Character> filter);
         Task<bool> ExistsByName(string name);
         Task<DefaultResult<CharacterResponse>> InsertAsync(CharacterRequest characterRequest);
         Task<DefaultResult<CharacterResponse>> UpdateAsync(CharacterRequest characterRequest);
-        Task<DefaultResult<DeleteResult>> DeleteAsync(string id);
+        Task<DefaultResultMessage> DeleteAsync(string id);
     }
 }

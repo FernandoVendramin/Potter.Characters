@@ -26,14 +26,9 @@ namespace Potter.Characters.Infra.Repositories.Base
             return await _collection.DeleteOneAsync(filter, cancellationToken);
         }
 
-        public async Task<IEnumerable<TModel>> GetByFilterAsync(FilterDefinition<TModel> filter, CancellationToken cancellationToken = default)
+        public async Task<IEnumerable<TModel>> GetAsync(FilterDefinition<TModel> filter, CancellationToken cancellationToken = default)
         {
             return await _collection.Find(filter).ToListAsync(cancellationToken);
-        }
-
-        public async Task<IEnumerable<TModel>> GetAllAsync(CancellationToken cancellationToken = default)
-        {
-            return await _collection.Find(Builders<TModel>.Filter.Empty).ToListAsync(cancellationToken);
         }
 
         public async Task<TModel> InsertAsync(TModel model, CancellationToken cancellationToken = default)
@@ -47,7 +42,7 @@ namespace Potter.Characters.Infra.Repositories.Base
             var filter = new FilterDefinitionBuilder<TModel>().Where(x => x.Id == model.Id);
             await _collection.ReplaceOneAsync(filter, model, new ReplaceOptions { IsUpsert = true }, cancellationToken);
 
-            return (await GetByFilterAsync(filter, cancellationToken)).FirstOrDefault();
+            return (await GetAsync(filter, cancellationToken)).FirstOrDefault();
         }
     }
 }
