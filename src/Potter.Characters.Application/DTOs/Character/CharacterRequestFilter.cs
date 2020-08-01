@@ -6,6 +6,7 @@ namespace Potter.Characters.Application.DTOs.Character
 {
     public class CharacterRequestFilter
     {
+        public string Id { get; set; }
         public string Name { get; set; }
         public string Role { get; set; }
         public string School { get; set; }

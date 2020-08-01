@@ -1,6 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Primitives;
-using MongoDB.Driver;
 using Potter.Characters.Application.DTOs;
 using Potter.Characters.Application.DTOs.Character;
 using Potter.Characters.Application.Interfaces;
@@ -25,13 +23,15 @@ namespace Potter.Characters.Api.Controllers
         /// </summary>
         [HttpGet]
         [Route("")]
-        public async Task<ActionResult<DefaultResult<List<CharacterResponse>>>> GetAll(string name, string house, string role, string school, string patronus)
+        public async Task<ActionResult<DefaultResult<List<CharacterResponse>>>> Get(string id, string name, string house, string role, string school, string patronus)
         {
             var defaultResult = new DefaultResult<List<CharacterResponse>>();
 
             try
             {
-                defaultResult = await _characterService.GetAllAsync(new CharacterRequestFilter() { 
+                defaultResult = await _characterService.GetAsync(new CharacterRequestFilter()
+                {
+                    Id = id,
                     House = house,
                     Name = name,
                     Role = role,
@@ -63,7 +63,7 @@ namespace Potter.Characters.Api.Controllers
                 defaultResult.SetMessage(ex.Message);
                 return StatusCode(500, defaultResult);
             }
-            
+
             return defaultResult;
         }
 

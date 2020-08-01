@@ -5,7 +5,7 @@ namespace Potter.Characters.Domain.Models
 {
     public class House : ModelBase
     {
-        public House(string id, string name, string mascot, string headOfHouse, string houseGhost, string founder, string school)
+        public House(string id, string name, string mascot, string headOfHouse, string houseGhost, string founder)
         {
             Id = id;
             Name = name;
@@ -13,7 +13,6 @@ namespace Potter.Characters.Domain.Models
             HeadOfHouse = headOfHouse;
             HouseGhost = houseGhost;
             Founder = founder;
-            School = school;
         }
 
         [BsonRequired]
@@ -26,7 +25,5 @@ namespace Potter.Characters.Domain.Models
         public string HouseGhost { get; private set; }
         [BsonRequired]
         public string Founder { get; private set; }
-        [BsonRequired]
-        public string School { get; private set; }
     }
 }

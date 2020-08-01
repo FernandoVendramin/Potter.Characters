@@ -8,7 +8,6 @@
         public string HeadOfHouse { get; set; }
         public string HouseGhost { get; set; }
         public string Founder { get; set; }
-        public string School { get; set; }
 
         public static explicit operator HouseResponse(Domain.Models.House house)
         {
@@ -17,10 +16,9 @@
                 Id = house.Id,
                 Name = house.Name,
                 Mascot = house.Mascot,
-                HeadOfHouse = house.School,
+                HeadOfHouse = house.HeadOfHouse,
                 HouseGhost = house.HouseGhost,
-                Founder = house.Founder,
-                School = house.School
+                Founder = house.Founder
             } : null;
         }
     }

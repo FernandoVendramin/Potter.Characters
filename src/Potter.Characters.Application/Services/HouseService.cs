@@ -46,8 +46,7 @@ namespace Potter.Characters.Application.Services
                         potterHouse.mascot,
                         potterHouse.headOfHouse,
                         potterHouse.houseGhost,
-                        potterHouse.founder,
-                        potterHouse.school);
+                        potterHouse.founder);
                 }
             }
 

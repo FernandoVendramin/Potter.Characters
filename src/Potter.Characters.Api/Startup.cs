@@ -10,6 +10,7 @@ using System;
 using System.IO;
 using System.IO.Compression;
 using System.Reflection;
+using System.Text.Json;
 
 namespace Potter.Characters.Api
 {
@@ -30,7 +31,13 @@ namespace Potter.Characters.Api
             services.AddDependencyInjections(); // Configura a IOC
 
             services.Configure<GzipCompressionProviderOptions>(op => op.Level = CompressionLevel.Optimal); // Adiciona compressão de resposta das APIs
-            services.AddControllers().AddJsonOptions(op => { op.JsonSerializerOptions.IgnoreNullValues = true; }); // Remove valores nulos da API
+
+            // Configurações do JSON
+            services.AddControllers().AddJsonOptions(op => 
+            { 
+                op.JsonSerializerOptions.IgnoreNullValues = true;
+                op.JsonSerializerOptions.PropertyNamingPolicy = null;
+            }); 
 
             services.AddSwaggerGen(swagger =>
             {

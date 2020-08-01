@@ -29,10 +29,17 @@ namespace Potter.Characters.Application.Services
             _houseService = houseService;
         }
 
-        public async Task<DefaultResult<List<CharacterResponse>>> GetAllAsync(CharacterRequestFilter filters)
+        public async Task<DefaultResult<List<CharacterResponse>>> GetAsync(CharacterRequestFilter filters)
         {
             var defaultResult = new DefaultResult<List<CharacterResponse>>();
+            var baseFilter = GetFilterDefinition(filters);
 
+            defaultResult.SetData((await _characterRepository.GetAsync(baseFilter)).Select(x => (CharacterResponse)x).ToList());
+            return defaultResult;
+        }
+
+        public FilterDefinition<Character> GetFilterDefinition(CharacterRequestFilter filters)
+        {
             var builder = Builders<Character>.Filter;
             var baseFilter = builder.Empty;
 
@@ -47,15 +54,7 @@ namespace Potter.Characters.Application.Services
                     baseFilter &= builder.Eq(prop.Name, value);
             }
 
-            defaultResult.SetData((await _characterRepository.GetAsync(baseFilter)).Select(x => (CharacterResponse)x).ToList());
-            return defaultResult;
-        }
-
-        public async Task<DefaultResult<List<CharacterResponse>>> GetByFilterAsync(FilterDefinition<Character> filter)
-        {
-            var defaultResult = new DefaultResult<List<CharacterResponse>>();
-            defaultResult.SetData((await _characterRepository.GetAsync(filter)).Select(x => (CharacterResponse)x).ToList());
-            return defaultResult;
+            return baseFilter;
         }
 
         public async Task<bool> ExistsByName(string name)
