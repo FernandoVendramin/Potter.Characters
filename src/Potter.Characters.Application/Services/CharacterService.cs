@@ -188,7 +188,7 @@ namespace Potter.Characters.Application.Services
 
             if (defaultResult.Success)
             {
-                character = await _characterRepository.UpdateAsync(character);
+                await _characterRepository.UpdateAsync(character);
                 defaultResult.SetData((CharacterResponse)character);
                 defaultResult.IsSuccess();
             }
@@ -201,7 +201,7 @@ namespace Potter.Characters.Application.Services
             var deleteResult = await _characterRepository.DeleteAsync(id);
             var defaultResult = new DefaultResultMessage();
 
-            if (deleteResult.DeletedCount > 0)
+            if (deleteResult)
             {
                 defaultResult.SetMessage(CommonMessages.ReccordsDeleted);
                 defaultResult.IsSuccess();

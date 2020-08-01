@@ -1,4 +1,5 @@
-﻿using Moq;
+﻿using MongoDB.Driver;
+using Moq;
 using Potter.Characters.Application.DTOs;
 using Potter.Characters.Application.DTOs.Character;
 using Potter.Characters.Application.Interfaces;
@@ -9,6 +10,7 @@ using Potter.Characters.IntegrationService.PotterApi.Interfaces;
 using Potter.Characters.IntegrationService.PotterApi.Models;
 using Potter.Characters.Utils.Messages;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -34,39 +36,173 @@ namespace Potter.Characters.Application.Test.Services
         }
 
         [Fact]
-        public async Task CharacterService_Insert_Success()
+        public async Task CharacterService_Delete_Success()
         {
-            var character = new CharacterRequest()
+            string id = "123";
+            _characterRepositoryMock
+                .Setup(x => x.DeleteAsync(id, It.IsAny<System.Threading.CancellationToken>()))
+                .Returns(Task.FromResult(true));
+
+            var deleteResult = await _characterService.DeleteAsync(id);
+
+            Assert.True(deleteResult.Success);
+            Assert.Single(deleteResult.Messages);
+            Assert.Contains(deleteResult.Messages, x => x == CommonMessages.ReccordsDeleted);
+
+            _characterRepositoryMock.Verify(x =>
+                x.DeleteAsync(id, It.IsAny<System.Threading.CancellationToken>()),
+                Times.Once()
+            );
+        }
+
+        [Fact]
+        public async Task CharacterService_Delete_NotSuccess()
+        {
+            string id = "123";
+            _characterRepositoryMock
+                .Setup(x => x.DeleteAsync(id, It.IsAny<System.Threading.CancellationToken>()))
+                .Returns(Task.FromResult(false));
+
+            var deleteResult = await _characterService.DeleteAsync(id);
+
+            Assert.False(deleteResult.Success);
+            Assert.Single(deleteResult.Messages);
+            Assert.Contains(deleteResult.Messages, x => x == string.Format(CharacterMessages.NotExistsIdInDatabase, id));
+
+            _characterRepositoryMock.Verify(x =>
+                x.DeleteAsync(id, It.IsAny<System.Threading.CancellationToken>()),
+                Times.Once()
+            );
+        }
+
+        public static IEnumerable<object[]> GetValidCharacters_WithOrWithoutHouse
+        {
+            get
             {
-                Name = "name",
-                Patronus = "pat",
-                House = "houseid",
-                Role = "role",
-                School = "scho"
+                return new[]
+                {
+                     new object[] {
+                         new Character(
+                            "id1",
+                            "name",
+                            null,
+                            null,
+                            null,
+                            null,
+                            new System.DateTime(),
+                            new System.DateTime()
+                        )
+                     },
+                     new object[] {
+                        new Character(
+                            "id2",
+                            "name",
+                            null,
+                            null,
+                            new House("houseid", "name", "mascot", "hof", "hog", "founder", "school"),
+                            null,
+                            new System.DateTime(),
+                            new System.DateTime()
+                        )
+                    }
+                };
+            }
+        }
+
+        [Theory(DisplayName = "CharacterService_Update_Success")]
+        [MemberData(nameof(GetValidCharacters_WithOrWithoutHouse))]
+        public async Task CharacterService_Update_Success(Character character)
+        {
+            MockDbCharacter_Success(character);
+
+            var characterRequest = new CharacterRequest()
+            {
+                Name = character.Name,
+                Patronus = character.Patronus,
+                Role = character.Role,
+                School = character.School,
+                House = character.House?.Id
             };
 
-            var potterCharacter = MockPotterCharacter_Success(character);
-            MockCheckHouseInconsistencies_Success(character, potterCharacter._id);
+            MockCheckHouseInconsistencies_Success(characterRequest, character.Id);
 
-            var insertResult = await _characterService.InsertAsync(character);
+            var insertResult = await _characterService.UpdateAsync(characterRequest);
+
+            Assert.True(insertResult.Success);
+
+            _characterRepositoryMock.Verify(x =>
+                x.UpdateAsync(
+                  It.Is<Character>(y =>
+                      y.Id == character.Id
+                      && y.Name == character.Name
+                      && y.Patronus == character.Patronus
+                      && (character.House != null ? y.House.Id == character.House.Id : y.House == null)
+                      && y.Role == character.Role
+                      && y.School == character.School
+                  ),
+                  It.IsAny<System.Threading.CancellationToken>()
+                ),
+                Times.Once()
+            );
+        }
+
+        public static IEnumerable<object[]> GetValidCharacterRequests_WithOrWithoutHouse
+        {
+            get
+            {
+                return new[]
+                {
+                     new object[] {
+                        new CharacterRequest()
+                        {
+                            Name = "name",
+                            Patronus = "pat",
+                            Role = "role",
+                            School = "scho"
+                        }
+                     },
+                     new object[] {
+                        new CharacterRequest()
+                        {
+                            Name = "name",
+                            Patronus = "pat",
+                            House = "houseid",
+                            Role = "role",
+                            School = "scho"
+                        }
+                     }
+                };
+            }
+        }
+
+        [Theory(DisplayName = "CharacterService_Insert_Success")]
+        [MemberData(nameof(GetValidCharacterRequests_WithOrWithoutHouse))]
+        public async Task CharacterService_Insert_Success(CharacterRequest characterRequest)
+        {
+            var potterCharacter = MockPotterCharacter_Success(characterRequest);
+            MockCheckHouseInconsistencies_Success(characterRequest, potterCharacter._id);
+
+            var insertResult = await _characterService.InsertAsync(characterRequest);
 
             Assert.True(insertResult.Success);
 
             _characterRepositoryMock.Verify(x =>
                 x.InsertAsync(
                   It.Is<Character>(y =>
-                      y.Name == character.Name
-                      && y.Patronus == character.Patronus
-                      && y.House.Id == character.House
-                      && y.Role == character.Role
-                      && y.School == character.School
-                  ), default
-                )
+                      y.Name == characterRequest.Name
+                      && y.Patronus == characterRequest.Patronus
+                      && (characterRequest.House != null ? y.House.Id == characterRequest.House : y.House == null)
+                      && y.Role == characterRequest.Role
+                      && y.School == characterRequest.School
+                  ), 
+                  It.IsAny<System.Threading.CancellationToken>()
+                ),
+                Times.Once()
             );
         }
 
         [Fact]
-        public async Task CharacterService_InsertNotExistsInPotterApi_NotSuccess()
+        public async Task CharacterService_Insert_NotExistsInPotterApi_NotSuccess()
         {
             var character = new CharacterRequest()
             {
@@ -89,7 +225,7 @@ namespace Potter.Characters.Application.Test.Services
         }
 
         [Fact]
-        public async Task CharacterService_InsertHouseInconsistencies_NotSuccess()
+        public async Task CharacterService_Insert_HouseInconsistencies_NotSuccess()
         {
             var character = new CharacterRequest()
             {
@@ -108,6 +244,7 @@ namespace Potter.Characters.Application.Test.Services
             Assert.False(insertResult.Success);
         }
 
+        #region Aux Functions
         private PotterApiCharacter MockPotterCharacter_Success(CharacterRequest character)
         {
             var potterApiCharacter = new PotterApiCharacter()
@@ -125,10 +262,25 @@ namespace Potter.Characters.Application.Test.Services
             return potterApiCharacter;
         }
 
+        private void MockDbCharacter_Success(Character character)
+        {
+            List<Character> listCharacter = new List<Character>() { character };
+            _characterRepositoryMock.Setup(x => x.GetAsync(
+                It.IsAny<FilterDefinition<Character>>(),
+                It.IsAny<System.Threading.CancellationToken>())
+            )
+            .Returns(Task.FromResult((IEnumerable<Character>)listCharacter));
+        }
+
         private void MockCheckHouseInconsistencies_Success(CharacterRequest character, string id)
         {
             DefaultResult<House> houseResponse = new DefaultResult<House>();
-            houseResponse.SetData(new House("houseid", null, null, null, null, null, null));
+
+            if (string.IsNullOrEmpty(character.House))
+                houseResponse.SetData(null);
+            else
+                houseResponse.SetData(new House(character.House, null, null, null, null, null, null));
+
             _houseServiceMock.Setup(x => x.CheckHouseInconsistenciesAsync(character, id)).Returns(Task.FromResult(houseResponse));
         }
 
@@ -149,5 +301,6 @@ namespace Potter.Characters.Application.Test.Services
                 )
                 .Returns(Task.FromResult(houseResponse));
         }
+        #endregion
     }
 }

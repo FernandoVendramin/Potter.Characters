@@ -10,7 +10,7 @@ namespace Potter.Characters.Domain.Interfaces.Base
     {
         Task<IEnumerable<TModel>> GetAsync(FilterDefinition<TModel> filter, CancellationToken cancellationToken = default);
         Task<TModel> InsertAsync(TModel model, CancellationToken cancellationToken = default(CancellationToken));
-        Task<TModel> UpdateAsync(TModel model, CancellationToken cancellationToken = default(CancellationToken));
-        Task<DeleteResult> DeleteAsync(string id, CancellationToken cancellationToken = default(CancellationToken));
+        Task UpdateAsync(TModel model, CancellationToken cancellationToken = default(CancellationToken));
+        Task<bool> DeleteAsync(string id, CancellationToken cancellationToken = default(CancellationToken));
     }
 }

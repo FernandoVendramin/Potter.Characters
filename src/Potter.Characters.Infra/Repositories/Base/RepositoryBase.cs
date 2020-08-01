@@ -20,10 +20,11 @@ namespace Potter.Characters.Infra.Repositories.Base
             _collection = database.GetCollection<TModel>(typeof(TModel).Name);
         }
 
-        public async Task<DeleteResult> DeleteAsync(string id, CancellationToken cancellationToken = default)
+        public async Task<bool> DeleteAsync(string id, CancellationToken cancellationToken = default)
         {
             var filter = new FilterDefinitionBuilder<TModel>().Where(x => x.Id == id);
-            return await _collection.DeleteOneAsync(filter, cancellationToken);
+            var deleteResult = await _collection.DeleteOneAsync(filter, cancellationToken);
+            return deleteResult.DeletedCount > 0;
         }
 
         public async Task<IEnumerable<TModel>> GetAsync(FilterDefinition<TModel> filter, CancellationToken cancellationToken = default)
@@ -37,12 +38,10 @@ namespace Potter.Characters.Infra.Repositories.Base
             return model;
         }
 
-        public async Task<TModel> UpdateAsync(TModel model, CancellationToken cancellationToken = default)
+        public async Task UpdateAsync(TModel model, CancellationToken cancellationToken = default)
         {
             var filter = new FilterDefinitionBuilder<TModel>().Where(x => x.Id == model.Id);
             await _collection.ReplaceOneAsync(filter, model, new ReplaceOptions { IsUpsert = true }, cancellationToken);
-
-            return (await GetAsync(filter, cancellationToken)).FirstOrDefault();
         }
     }
 }
