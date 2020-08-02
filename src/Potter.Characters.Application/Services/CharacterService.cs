@@ -32,29 +32,10 @@ namespace Potter.Characters.Application.Services
         public async Task<DefaultResult<List<CharacterResponse>>> GetAsync(CharacterRequestFilter filters)
         {
             var defaultResult = new DefaultResult<List<CharacterResponse>>();
-            var baseFilter = GetFilterDefinition(filters);
+            var baseFilter = filters.GetFilterDefinition();
 
             defaultResult.SetData((await _characterRepository.GetAsync(baseFilter)).Select(x => (CharacterResponse)x).ToList());
             return defaultResult;
-        }
-
-        public FilterDefinition<Character> GetFilterDefinition(CharacterRequestFilter filters)
-        {
-            var builder = Builders<Character>.Filter;
-            var baseFilter = builder.Empty;
-
-            if (!string.IsNullOrEmpty(filters.House))
-                baseFilter &= builder.Eq("House.Id", filters.House);
-
-            var props = typeof(CharacterRequestFilter).GetProperties().Where(x => x.Name != "House");
-            foreach (var prop in props)
-            {
-                string value = prop.GetValue(filters)?.ToString();
-                if (!string.IsNullOrEmpty(value))
-                    baseFilter &= builder.Eq(prop.Name, value);
-            }
-
-            return baseFilter;
         }
 
         public async Task<bool> ExistsByName(string name)

@@ -1,18 +1,12 @@
-﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Polly;
-using Polly.Extensions.Http;
-using Polly.Wrap;
 using Potter.Characters.IntegrationService.PotterApi.Configurations;
 using Potter.Characters.IntegrationService.PotterApi.Interfaces;
 using Potter.Characters.IntegrationService.PotterApi.Service;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
-using System.Threading.Tasks;
 
 namespace Potter.Characters.Api.Configurations
 {
@@ -29,7 +23,7 @@ namespace Potter.Characters.Api.Configurations
             IAsyncPolicy<HttpResponseMessage> retryPolicy = Policy
                 .HandleResult<HttpResponseMessage>(r => !r.IsSuccessStatusCode)
                 .WaitAndRetryAsync(
-                    3, 
+                    3,
                     retryAttempt => TimeSpan.FromSeconds(retryAttempt),
                     onRetry: (message, retryCount) =>
                     {
@@ -43,10 +37,12 @@ namespace Potter.Characters.Api.Configurations
                 .CircuitBreakerAsync(
                     3,
                     TimeSpan.FromSeconds(30),
-                    onBreak: (message, timespan) => {
+                    onBreak: (message, timespan) =>
+                    {
                         Console.Out.WriteLine($"Content: {message.Result.Content.ReadAsStringAsync()}");
                         Console.Out.WriteLine($"ReasonPhrase: {message.Result.ReasonPhrase}");
-                    }, onReset: () => {
+                    }, onReset: () =>
+                    {
                         Console.Out.WriteLine("Reset");
                     });
 

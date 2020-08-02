@@ -4,7 +4,6 @@ using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using Potter.Characters.Infra.Configuration;
 using Potter.Characters.Infra.Interfaces;
-using Potter.Characters.IntegrationService.PotterApi.Configurations;
 using System;
 
 namespace Potter.Characters.Api.Configurations
@@ -20,7 +19,6 @@ namespace Potter.Characters.Api.Configurations
             services.AddSingleton<IMongoConfig>(x => x.GetRequiredService<IOptions<MongoConfig>>().Value);
 
             services.AddSingleton<IMongoClient>(new MongoClient(configuration.GetSection("MongoConfig")?.GetSection("ConnectionString")?.Value));
-            //services.AddSingleton(new MongoClient(configuration.GetSection("MongoConfig")?.GetSection("ConnectionString")?.Value));
         }
     }
 }

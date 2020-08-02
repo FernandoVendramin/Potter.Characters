@@ -54,7 +54,6 @@ namespace Potter.Characters.Application.Test.Services
             Assert.Equal(insertResult.Data.Id, house._id);
             Assert.Equal(insertResult.Data.Founder, house.founder);
             Assert.Equal(insertResult.Data.Name, house.name);
-            Assert.Equal(insertResult.Data.School, house.school);
             Assert.Equal(insertResult.Data.Mascot, house.mascot);
             Assert.Equal(insertResult.Data.HeadOfHouse, house.headOfHouse);
             Assert.Equal(insertResult.Data.HouseGhost, house.houseGhost);

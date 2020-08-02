@@ -10,7 +10,7 @@ namespace Potter.Characters.Domain.Test.Models
         [Fact]
         public void Character_WithHouse_IsValid()
         {
-            var house = new House("id", "name", "mascot", "hof", "hog", "founder", "school");
+            var house = new House("id", "name", "mascot", "hof", "hog", "founder");
             var character = new Character(
                 "id",
                 "name",

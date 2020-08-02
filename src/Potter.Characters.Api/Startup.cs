@@ -4,13 +4,9 @@ using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.OpenApi.Models;
+using Microsoft.Extensions.Logging;
 using Potter.Characters.Api.Configurations;
-using System;
-using System.IO;
 using System.IO.Compression;
-using System.Reflection;
-using System.Text.Json;
 
 namespace Potter.Characters.Api
 {
@@ -25,57 +21,33 @@ namespace Potter.Characters.Api
 
         public void ConfigureServices(IServiceCollection services)
         {
-            // implementar LOGs !!!!!!!!!
             services.AddMongoDBConfiguration(Configuration); // Configura o Mongo
             services.AddPotterApiConfiguration(Configuration); // Configura serviço com o site PotterApi
             services.AddDependencyInjections(); // Configura a IOC
+            services.AddRedisConfiguration(Configuration); // Configura o servior redis
+            services.AddSwaggerConfiguration(Configuration); // Configura o swagger
 
             services.Configure<GzipCompressionProviderOptions>(op => op.Level = CompressionLevel.Optimal); // Adiciona compressão de resposta das APIs
 
             // Configurações do JSON
-            services.AddControllers().AddJsonOptions(op => 
-            { 
+            services.AddControllers().AddJsonOptions(op =>
+            {
                 op.JsonSerializerOptions.IgnoreNullValues = true;
                 op.JsonSerializerOptions.PropertyNamingPolicy = null;
-            }); 
-
-            services.AddSwaggerGen(swagger =>
-            {
-                swagger.SwaggerDoc("v1",
-                    new OpenApiInfo
-                    {
-                        Title = "Potter Characters",
-                        Version = "v1",
-                        Description = "Esta é uma API REST criada com o ASP.NET Core 3.1",
-                        Contact = new OpenApiContact
-                        {
-                            Name = "Fernando Vendramin",
-                            Url = new Uri("https://github.com/FernandoVendramin")
-                        }
-                    });
-
-                //var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-                //var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-
-                //swagger.IncludeXmlComments(xmlPath);
-
-                /*
-                 <PropertyGroup>
-                  <GenerateDocumentationFile>true</GenerateDocumentationFile>
-                  <NoWarn>$(NoWarn);1591</NoWarn>
-                </PropertyGroup>
-                */
             });
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
             if (env.IsDevelopment())
                 app.UseDeveloperExceptionPage();
 
-            // Ativando Swagger
+            //loggerFactory.AddProvider(new CustomLoggerProvider())
+
+            // Habilitando o Swagger
             app.UseSwagger();
-            app.UseSwaggerUI(c => {
+            app.UseSwaggerUI(c =>
+            {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Potter Characters - v1");
             });
 

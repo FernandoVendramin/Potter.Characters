@@ -113,7 +113,7 @@ namespace Potter.Characters.Application.Test.Services
             );
             List<Character> characterList = new List<Character>() { character1, character2, character3, character4 };
 
-            var filterDefinition = _characterService.GetFilterDefinition(filters);
+            var filterDefinition = filters.GetFilterDefinition();
             _characterRepositoryMock
                 .Setup(x => x.GetAsync(filterDefinition, It.IsAny<System.Threading.CancellationToken>()))
                 .Returns(Task.FromResult((IEnumerable<Character>)characterList));
