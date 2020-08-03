@@ -26,18 +26,6 @@ namespace Potter.Characters.Api.Configurations
                             Email = "fernando.vendramin@gmail.com"
                         }
                     });
-
-                //var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-                //var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-
-                //swagger.IncludeXmlComments(xmlPath);
-
-                /*
-                 <PropertyGroup>
-                  <GenerateDocumentationFile>true</GenerateDocumentationFile>
-                  <NoWarn>$(NoWarn);1591</NoWarn>
-                </PropertyGroup>
-                */
             });
         }
     }

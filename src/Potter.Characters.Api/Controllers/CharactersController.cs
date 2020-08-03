@@ -21,9 +21,6 @@ namespace Potter.Characters.Api.Controllers
             _logger = logger;
         }
 
-        /// <summary>
-        /// Retorna todos os Personagens.
-        /// </summary>
         [HttpGet]
         [Route("")]
         public async Task<ActionResult<DefaultResult<List<CharacterResponse>>>> Get(string id, string name, string house, string role, string school, string patronus)

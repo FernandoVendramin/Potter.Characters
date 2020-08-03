@@ -31,7 +31,7 @@ namespace Potter.Characters.IntegrationService.PotterApi.Service
             if (potterApiCache == null)
             {
                 DistributedCacheEntryOptions opcoesCache = new DistributedCacheEntryOptions();
-                opcoesCache.SetAbsoluteExpiration(TimeSpan.FromMinutes(10));
+                opcoesCache.SetAbsoluteExpiration(TimeSpan.FromMinutes(5));
 
                 potterApiHouses = await _httpClient.GetFromJsonAsync<List<PotterApiHouse>>
                     ($"v1/houses?key={_potterApiConfig.Key}");

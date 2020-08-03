@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Polly;
 using Potter.Characters.IntegrationService.PotterApi.Configurations;
@@ -13,7 +12,7 @@ namespace Potter.Characters.Api.Configurations
 {
     public static class PotterApiConfiguration
     {
-        public static void AddPotterApiConfiguration(this IServiceCollection services, IConfiguration configuration/*, ILogger<Startup> logger*/)
+        public static void AddPotterApiConfiguration(this IServiceCollection services, IConfiguration configuration)
         {
             if (services == null) throw new ArgumentNullException(nameof(services));
 
@@ -28,7 +27,7 @@ namespace Potter.Characters.Api.Configurations
                     retryAttempt => TimeSpan.FromSeconds(retryAttempt),
                     onRetry: (message, retryCount) =>
                     {
-                        //logger.LogWarning($"Retry polyci -> Count: {retryCount} Message: {message.Result.Content.ReadAsStringAsync()}");
+                        // TODO: Gerar log 
                     });
 
             IAsyncPolicy<HttpResponseMessage> circuitBreakerPolicy = Policy
@@ -38,15 +37,15 @@ namespace Potter.Characters.Api.Configurations
                     TimeSpan.FromSeconds(30),
                     onBreak: (message, timespan) =>
                     {
-                        //logger.LogWarning($"CircuitBreaker polyci (BREAK) -> Timespan: {timespan} Message: {message.Result.Content.ReadAsStringAsync()}");
+                        // TODO: Gerar log 
                     },
                     onReset: () =>
                     {
-                        //logger.LogWarning($"CircuitBreaker polyci (RESET) ");
+                        // TODO: Gerar log 
                     },
-                    onHalfOpen: () => 
+                    onHalfOpen: () =>
                     {
-                        //logger.LogWarning($"CircuitBreaker polyci (HALF OPEN)");
+                        // TODO: Gerar log 
                     });
 
             IAsyncPolicy<HttpResponseMessage> policyWrap = Policy.WrapAsync(retryPolicy, circuitBreakerPolicy);

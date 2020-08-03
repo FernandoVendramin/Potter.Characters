@@ -12,36 +12,5 @@ namespace Potter.Characters.Infra.Repositories
         {
 
         }
-        //private readonly IMongoCollection<Character> _collection;
-        //public CharacterRepository(IMongoClient client, IMongoConfig mongoConfig)
-        //{
-        //    var database = client.GetDatabase(mongoConfig.Database);
-        //    _collection = database.GetCollection<Character>(typeof(Character).Name);
-        //}
-
-        //public Task<Character> DeleteAsync(Guid id, CancellationToken cancellationToken = default)
-        //{
-        //    throw new NotImplementedException();
-        //}
-
-        //public Task<IEnumerable<Character>> GetAllAsync(CancellationToken cancellationToken = default)
-        //{
-        //    throw new NotImplementedException();
-        //}
-
-        //public async Task<IEnumerable<Character>> GetByFilterAsync(FilterDefinition<Character> filter, CancellationToken cancellationToken = default)
-        //{
-        //    return await _collection.Find(filter).ToListAsync(cancellationToken);
-        //}
-
-        //public Task<Character> InsertAsync(Character entity, CancellationToken cancellationToken = default)
-        //{
-        //    throw new NotImplementedException();
-        //}
-
-        //public Task<Character> UpdateAsync(Character entity, CancellationToken cancellationToken = default)
-        //{
-        //    throw new NotImplementedException();
-        //}
     }
 }

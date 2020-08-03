@@ -1,10 +1,7 @@
 ﻿using MongoDB.Driver;
-using MongoDB.Driver.Linq;
 using Potter.Characters.Domain.Interfaces.Base;
 using Potter.Characters.Infra.Interfaces;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 

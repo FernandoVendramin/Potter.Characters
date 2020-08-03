@@ -2,12 +2,13 @@
 {
     public class CharacterMessages
     {
+        // Error messages
         public static string ExistsInDatabase = "Já existe um personagem com o nome '{0}' no banco de dados.";
         public static string NotExistsInPotterApi = "Não existe um personagem com o nome '{0}' na base do PotterApi.";
         public static string NotExistsNameInDatabase = "Não existe um personagem com o nome '{0}' no Banco de Dados.";
         public static string NotExistsIdInDatabase = "Não existe um personagem com o id '{0}' no Banco de Dados.";
 
-        // Model Messages
+        // Model messages
         public static string NameIsRequired = "O Nome é obrigatório.";
         public static string IdLessThen = "A quantidade de caracters do Id, deve ser inferior a 50.";
         public static string NameLessThen = "A quantidade de caracters do Nome, deve ser inferior a 150.";
