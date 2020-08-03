@@ -1,4 +1,3 @@
-
 # Potter.Characters
 
 Este projeto consiste em uma API REST,  para inserir, atualizar, excluir e consultar (CRUD)  Personagens do site  [potterapi](https://www.potterapi.com) (Site que disponibiliza uma série de informações sobre a série Harry Potter).
@@ -17,6 +16,13 @@ Os personagens inseridos no banco do projeto, são validados de acordo com os dad
 | Redis                       |       2.2.0 |
 | Docker                      |    19.03.12 |
 
+## Pré-requisitos
+
+Para executar o projeto, é necessário criar ambientes utilizando a tecnologia abaixo:
+
+* .NET Core 3.1
+* Servidor Mongo DB.
+* Servidor Redis.
 
 ## Configurações
 
