@@ -14,9 +14,7 @@ namespace Potter.Characters.Api.Configurations
             if (services == null) throw new ArgumentNullException(nameof(services));
 
             // Infra
-            //services.AddScoped<DataContext>();
             services.AddScoped<ICharacterRepository, CharacterRepository>();
-            //services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             // Application
             services.AddScoped<ICharacterService, CharacterService>();

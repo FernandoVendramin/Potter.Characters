@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Potter.Characters.Application.DTOs;
 using Potter.Characters.Application.DTOs.Character;
 using Potter.Characters.Application.Interfaces;
@@ -12,10 +13,12 @@ namespace Potter.Characters.Api.Controllers
     public class CharactersController : ControllerBase
     {
         private readonly ICharacterService _characterService;
+        private readonly ILogger<CharactersController> _logger;
 
-        public CharactersController(ICharacterService characterService)
+        public CharactersController(ICharacterService characterService, ILogger<CharactersController> logger)
         {
             _characterService = characterService;
+            _logger = logger;
         }
 
         /// <summary>
@@ -26,7 +29,6 @@ namespace Potter.Characters.Api.Controllers
         public async Task<ActionResult<DefaultResult<List<CharacterResponse>>>> Get(string id, string name, string house, string role, string school, string patronus)
         {
             var defaultResult = new DefaultResult<List<CharacterResponse>>();
-
             try
             {
                 defaultResult = await _characterService.GetAsync(new CharacterRequestFilter()
@@ -41,6 +43,8 @@ namespace Potter.Characters.Api.Controllers
             }
             catch (System.Exception ex)
             {
+                _logger.LogError(ex, ex.Message);
+
                 defaultResult.SetMessage(ex.Message);
                 return StatusCode(500, defaultResult);
             }
@@ -60,6 +64,8 @@ namespace Potter.Characters.Api.Controllers
             }
             catch (System.Exception ex)
             {
+                _logger.LogError(ex, ex.Message);
+
                 defaultResult.SetMessage(ex.Message);
                 return StatusCode(500, defaultResult);
             }
@@ -79,6 +85,8 @@ namespace Potter.Characters.Api.Controllers
             }
             catch (System.Exception ex)
             {
+                _logger.LogError(ex, ex.Message);
+
                 defaultResult.SetMessage(ex.Message);
                 return StatusCode(500, defaultResult);
             }
@@ -98,6 +106,8 @@ namespace Potter.Characters.Api.Controllers
             }
             catch (System.Exception ex)
             {
+                _logger.LogError(ex, ex.Message);
+
                 defaultResult.SetMessage(ex.Message);
                 return StatusCode(500, defaultResult);
             }

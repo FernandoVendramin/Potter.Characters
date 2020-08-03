@@ -25,6 +25,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "6 - Utils", "6 - Utils", "{
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1 - Docs", "1 - Docs", "{8744977A-CFB9-4006-AD69-426D02E7266C}"
 	ProjectSection(SolutionItems) = preProject
+		Dockerfile = Dockerfile
 		src\Potter.Characters.Api\README.md = src\Potter.Characters.Api\README.md
 	EndProjectSection
 EndProject
@@ -36,7 +37,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Potter.Characters.Applicati
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "7 - IntegrationTests", "7 - IntegrationTests", "{CCA8D1A5-1C3C-4AB9-9576-291F3315AAD8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Potter.Characters.IntegrationTest", "test\Potter.Characters.IntegrationTest\Potter.Characters.IntegrationTest.csproj", "{5F455545-B43D-4377-B107-7D1CDB7C8F8F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Potter.Characters.IntegrationTest", "test\Potter.Characters.IntegrationTest\Potter.Characters.IntegrationTest.csproj", "{5F455545-B43D-4377-B107-7D1CDB7C8F8F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

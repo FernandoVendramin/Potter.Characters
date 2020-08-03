@@ -1,12 +1,10 @@
 ﻿using Newtonsoft.Json;
-using Potter.Characters.Application.DTOs;
 using Potter.Characters.Application.DTOs.Character;
 using Potter.Characters.IntegrationTest.Configs;
 using Potter.Characters.Utils.Messages;
-using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Xunit;
@@ -21,6 +19,12 @@ namespace Potter.Characters.IntegrationTest.Tests
         {
             _outputHelper = outputHelper;
         }
+
+        /* 
+         * Foi necessário criar as classes abaixo pois o JsonConvert.DeserializeObject
+         * não consegue deserializar o conteúdo do Data, provávelmente por set um tipo 
+         * especificado na implementação dos objetos DefaultResult e DefaultResultMessage
+         */
 
         #region AuxClasses
         public class DefaultResult_CharacterResponseList
@@ -52,24 +56,16 @@ namespace Potter.Characters.IntegrationTest.Tests
             {
                 Name = "Phineas Nigellus Black",
                 Role = "(Formerly) Headmaster of Hogwarts",
-                School = "Hogwarts School of Witchcraft and Wizardry",
-                //House = "5a05dc8cd45bd0a11bd5e071"
+                School = "Hogwarts School of Witchcraft and Wizardry"
             };
 
             await DeleteCharacterTest(characterId);
             await PostCharacterTest(myCharacter);
+
             myCharacter.House = "5a05dc8cd45bd0a11bd5e071";
+
             await PutCharacterTest(myCharacter);
-
-
-            //var getResponse = await GetCharacters();
-
-            //jsonString = await getResponse.Content.ReadAsStringAsync();
-            //var getResponseJson = JsonConvert.DeserializeObject<DefaultResult_CharacterResponseList>(jsonString);
-
-            //Assert.Equal(HttpStatusCode.OK, getResponse.StatusCode);
-            //getResponse.EnsureSuccessStatusCode();
-
+            await GetCharacters(myCharacter);
         }
 
         private async Task DeleteCharacterTest(string id)
@@ -122,40 +118,21 @@ namespace Potter.Characters.IntegrationTest.Tests
             Assert.Equal(HttpStatusCode.OK, putResponse.StatusCode);
         }
 
-        private async Task<HttpResponseMessage> GetCharacters()
+        private async Task GetCharacters(CharacterRequest characterRequest)
         {
             _outputHelper.WriteLine("Executando Get");
-            return await _httpClient.GetAsync($"/api/v1/Characters");
+            var getResponse = await _httpClient.GetAsync($"/api/v1/Characters?name={characterRequest.Name}");
+
+            var jsonString = await getResponse.Content.ReadAsStringAsync();
+            var getResponseJson = JsonConvert.DeserializeObject<DefaultResult_CharacterResponseList>(jsonString);
+
+            Assert.True(getResponseJson.Success);
+            Assert.Single(getResponseJson.Data);
+            Assert.Equal(characterRequest.Name, getResponseJson.Data.FirstOrDefault().Name);
+            Assert.Equal(characterRequest.Role, getResponseJson.Data.FirstOrDefault().Role);
+            Assert.Equal(characterRequest.School, getResponseJson.Data.FirstOrDefault().School);
+            Assert.Equal(characterRequest.House, getResponseJson.Data.FirstOrDefault().House.Id);
+            Assert.Equal(HttpStatusCode.OK, getResponse.StatusCode);
         }
-
-        //[Fact, TestPriority(1)]
-        //public async Task GetCharacters()
-        //{
-        //    var data = DateTime.Now;
-        //    _outputHelper.WriteLine("Executando Get 1 {0:hh:mm:ss.fff tt}", data);
-
-        //    var response = await _httpClient.GetAsync($"/api/v1/Characters");
-        //    response.EnsureSuccessStatusCode();
-
-        //    var resultString = await response.Content.ReadAsStringAsync();
-        //    var characterResponse = JsonConvert.DeserializeObject<DefaultResult_CharacterResponse>(resultString);
-
-        //    Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        //}
-
-        //[Fact, TestPriority(2)]
-        //public async Task GetCharacters2()
-        //{
-        //    var data = DateTime.Now;
-        //    _outputHelper.WriteLine("Executando Get 2 {0:hh:mm:ss.fff tt}", data);
-
-        //    var response = await _httpClient.GetAsync($"/api/v1/Characters");
-        //    response.EnsureSuccessStatusCode();
-
-        //    var resultString = await response.Content.ReadAsStringAsync();
-        //    var characterResponse = JsonConvert.DeserializeObject<DefaultResult_CharacterResponse>(resultString);
-
-        //    Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        //}
     }
 }

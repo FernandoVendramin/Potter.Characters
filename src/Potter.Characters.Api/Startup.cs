@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Potter.Characters.Api.Configurations;
 using System.IO.Compression;
 
@@ -37,12 +36,10 @@ namespace Potter.Characters.Api
             });
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
                 app.UseDeveloperExceptionPage();
-
-            //loggerFactory.AddProvider(new CustomLoggerProvider())
 
             // Habilitando o Swagger
             app.UseSwagger();

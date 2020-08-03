@@ -7,7 +7,6 @@ namespace Potter.Characters.Application.DTOs
         public DefaultResultMessage()
         {
             Success = true;
-            Messages = new List<string>();
         }
 
         public bool Success { get; private set; }
@@ -15,8 +14,22 @@ namespace Potter.Characters.Application.DTOs
 
         public void IsSuccess() { Success = true; }
         public void IsNotSuccess() { Success = false; }
-        public void SetMessage(string message) { Messages.Add(message); Success = false; }
-        public void SetMessages(List<string> messages) { Messages.AddRange(messages); Success = false; }
+        public void SetMessage(string message)
+        {
+            if (Messages == null)
+                Messages = new List<string>();
+
+            Messages.Add(message);
+            Success = false;
+        }
+        public void SetMessages(List<string> messages)
+        {
+            if (Messages == null)
+                Messages = new List<string>();
+
+            Messages.AddRange(messages);
+            Success = false;
+        }
         public void ClearMessages() { Messages.Clear(); }
     }
 }
