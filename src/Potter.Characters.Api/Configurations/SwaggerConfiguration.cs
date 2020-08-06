@@ -18,7 +18,7 @@ namespace Potter.Characters.Api.Configurations
                     {
                         Title = "Potter Characters",
                         Version = "v1",
-                        Description = "Esta é uma API REST criada com o ASP.NET Core 3.1, elaborada encima do serviço PotterApi",
+                        Description = "Esta é uma API REST criada com o ASP.NET Core 3.1, elaborada em cima do serviço PotterApi",
                         Contact = new OpenApiContact
                         {
                             Name = "Fernando Vendramin",
